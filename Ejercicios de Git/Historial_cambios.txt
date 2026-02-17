@@ -1,0 +1,3 @@
+El commit mas reciente es el que tiene un comentario de "Ejercicios antes de git", se hizo un push de la rama past-exercises a la rama main
+
+El primer commit fue en la rama main, se creo el repositorio con su contenido inicial y agrego README
