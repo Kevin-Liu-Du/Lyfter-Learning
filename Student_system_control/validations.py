@@ -36,4 +36,4 @@ def validate_section(message):
         ):
             return section.upper()
         
-        print("Section must be like 11B (numbers followed by one letter).")
+        print("Class number must be like 11B (numbers followed by one letter).")
