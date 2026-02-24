@@ -1,15 +1,15 @@
 from validations import validate_integer, validate_name, validate_grade, validate_section
 
-import storage
+import main 
 
-def add_student():
+def add_student(student_list):
     amount = validate_integer("How many students do you want to add? ")
     print()
     for _ in range(amount):
         while True:
             name = validate_name("Enter the student's name: ")
             
-            if any(name.lower() == student["name"].lower() for student in storage.student_list):
+            if any(name.lower() == student["name"].lower() for student in student_list):
                 print("This student already exists. Please enter a different name.")
                 continue #It will continue asking until the name does not exist, in other words, it returns to the beginning of the while loop to ask for another name.
 
@@ -22,7 +22,7 @@ def add_student():
         science = validate_grade("Enter Science grade: ")
         print(f"\n student '{name}' added successfully.\n")
 
-        storage.student_list.append({
+        student_list.append({
             "name": name,
             "class_number": section,
             "spanish": spanish,
@@ -32,22 +32,21 @@ def add_student():
         })
 
 
-    #print(storage.student_list)
 
-def average_grade_of_each_student():
+def average_grade_of_each_student(student_list):
     averages = []
-    for student in storage.student_list:
+    for student in student_list:
         grade = (student["spanish"] + student["english"] + student["social_studies"] + student["science"]) / 4
         averages.append(grade)
     return averages
 
 
 
-def show_all_students():
-    if storage.student_list == []:
+def show_all_students(student_list):
+    if student_list == []:
         print("No students to show.")
     else:
-        sorted_students = sorted(storage.student_list, key=lambda student: student["name"])
+        sorted_students = sorted(student_list, key=lambda student: student["name"])
         print(f"All students sorted alphabetically:\n")
         for index, student in enumerate(sorted_students, start=1):
             print(
@@ -62,14 +61,14 @@ def show_all_students():
             )
             print()
 
-        total_students = len(storage.student_list)
+        total_students = len(student_list)
         print(f"Total number of students: {total_students}")
 
-def show_top_3_students():
-    if storage.student_list == []:
+def show_top_3_students(student_list):
+    if student_list == []:
         print("No students to show.")
     else:
-        sorted_students = sorted(storage.student_list, key=lambda student: (student["spanish"] + student["english"] + student["social_studies"] + student["science"]) / 4, reverse=True) 
+        sorted_students = sorted(student_list, key=lambda student: (student["spanish"] + student["english"] + student["social_studies"] + student["science"]) / 4, reverse=True) 
         #key tells sorted how to sort the students, in this case using a lambda function that calculates the average of each student's grades.
         #reverse=True tells sorted to sort from highest to lowest, meaning that students with the highest averages will appear first in the sorted list.
         #sorted_students is the list of students sorted from highest to lowest according to their grade point average.
@@ -89,36 +88,36 @@ def show_top_3_students():
             print(f"{index}. {student['name']} - {average:.2f}")
 
 
-def show_average_grade_of_all_students():
-    if storage.student_list == []:
+def show_average_grade_of_all_students(student_list):
+    if student_list == []:
         print("No students to calculate average.")
     else:
-        average_list = average_grade_of_each_student()
+        average_list = average_grade_of_each_student(student_list)
         all_average = sum(average_list) / len(average_list) #floats cannot be iterated
         print(f"The average grade of all students is: {all_average:.2f}")
 
-def delete_student():
-    if storage.student_list == []:
+def delete_student(student_list):
+    if student_list == []:
         print("No students to delete.")
     else:
         name_to_delete = validate_name("Enter the name of the student you want to delete: ")
         class_number_to_delete = validate_section("Enter the class number of the student you want to delete: ")
-        for student in storage.student_list:
+        for student in student_list:
             if student["name"].lower() == name_to_delete.lower() and student["class_number"].lower() == class_number_to_delete.lower():
                 confirmation = input(f"Are you sure you want to delete student '{name_to_delete}' with class number '{class_number_to_delete}'? (yes/no): ")
                 if confirmation.lower() == "yes":
-                    storage.student_list.remove(student)
+                    student_list.remove(student)
                     print(f"Student '{name_to_delete}' has been deleted.")
                     break
         else:
             print(f"No student found with the name '{name_to_delete}' and class number '{class_number_to_delete}'.")
 
 
-def failed_students():
-    if storage.student_list == []:
-        print("No students to show.")
+def failed_students(student_list):
+    if student_list == []:
+        print("No failed students to show.")
     else:
-        for students in storage.student_list:
+        for students in student_list:
             spanish = students["spanish"]
             english = students["english"]
             social_studies = students["social_studies"]

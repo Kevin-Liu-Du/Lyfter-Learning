@@ -1,5 +1,5 @@
 import csv
-import storage
+import main
 
 student_headers = (
     "name",
@@ -11,8 +11,9 @@ student_headers = (
 )
 
 def export_CSV_file(file_path, data, headers):
-    if storage.student_list == []:
+    if not data:
         print("No students to export.")
+        return
     else: 
         with open(file_path, 'w', encoding='utf-8', newline='') as file:
             writer = csv.DictWriter(file, headers) 
@@ -22,7 +23,7 @@ def export_CSV_file(file_path, data, headers):
 
 
 
-def import_csv():
+def import_csv(student_list):
     try:
         with open("students.csv", "r", newline="", encoding="utf-8") as file:
             reader = csv.DictReader(file) #with dictreader, each row of the CSV file is read as a dictionary, where the keys are the column headers and the values are the corresponding data for each student.
@@ -31,7 +32,7 @@ def import_csv():
             while True:
                 user_input = input(warning_message).strip().lower()
                 if user_input == "yes":
-                    storage.student_list.clear() #It clears the current student list before importing the new data, ensuring that the imported data replaces the existing data.
+                    student_list.clear() #It clears the current student list before importing the new data, ensuring that the imported data replaces the existing data.
                     for row in reader:
                         try:
                             row["spanish"] = float(row["spanish"]) #It converts the string values from the CSV file into floats, which is necessary for the grade data to be used correctly in calculations and comparisons within the program.
@@ -43,7 +44,7 @@ def import_csv():
                             #print(reader.fieldnames) #It prints the field names of the CSV file, which can help identify any issues with the data format or structure in the CSV file.
                             #print(row)
                             return
-                        storage.student_list.append(row)
+                        student_list.append(row)
                     print("Data imported successfully.")
                     break
                 elif user_input == "no":
