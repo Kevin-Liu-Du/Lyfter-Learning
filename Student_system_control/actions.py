@@ -1,6 +1,5 @@
 from validations import validate_integer, validate_name, validate_grade, validate_section
 
-import main 
 
 def add_student(student_list):
     amount = validate_integer("How many students do you want to add? ")
@@ -8,14 +7,12 @@ def add_student(student_list):
     for _ in range(amount):
         while True:
             name = validate_name("Enter the student's name: ")
-            
-            if any(name.lower() == student["name"].lower() for student in student_list):
-                print("This student already exists. Please enter a different name.")
-                continue #It will continue asking until the name does not exist, in other words, it returns to the beginning of the while loop to ask for another name.
+            section = validate_section("Enter the student's class number: ")
+            if validate_student_exists(student_list, name, section):
+                print(f"A student with the name '{name}' and class number '{section}' already exists. Please enter a different name or class number.")
+            else:
+                break
 
-            break  #exits the while loop because the name is valid and is not repeated
-
-        section = validate_section("Enter the student's class number: ")
         spanish = validate_grade("Enter Spanish grade: ")
         english = validate_grade("Enter English grade: ")
         social_studies = validate_grade("Enter Social Studies grade: ")
@@ -33,12 +30,49 @@ def add_student(student_list):
 
 
 
-def average_grade_of_each_student(student_list):
-    averages = []
+def validate_student_exists(student_list, name, section):
     for student in student_list:
-        grade = (student["spanish"] + student["english"] + student["social_studies"] + student["science"]) / 4
-        averages.append(grade)
-    return averages
+        if student["name"].lower() == name.lower() and student["class_number"].lower() == section.lower():
+            return True
+    return False
+    
+
+
+
+def calculate_average(student): #return a float value that represents the average grade of a student
+        return (
+            student["spanish"]
+            + student["english"]
+            + student["social_studies"]
+            + student["science"]
+        ) / 4
+
+
+
+def calculate_top_3_students(student_list):
+    sorted_students = sorted(
+        student_list,
+        key=calculate_average,
+        reverse=True
+    )
+
+    top_3 = sorted_students[:3]
+
+    return [(student, calculate_average(student)) for student in top_3]
+
+
+
+def print_top_3_students(student_list):
+    top_students = calculate_top_3_students(student_list)
+
+    if not top_students:
+        print("No students to show.")
+        return
+
+    print("Top 3 Students:")
+
+    for index, (student, average) in enumerate(top_students, start=1):
+        print(f"{index}. {student['name']} - {average:.2f}")
 
 
 
@@ -64,37 +98,17 @@ def show_all_students(student_list):
         total_students = len(student_list)
         print(f"Total number of students: {total_students}")
 
-def show_top_3_students(student_list):
-    if student_list == []:
-        print("No students to show.")
-    else:
-        sorted_students = sorted(student_list, key=lambda student: (student["spanish"] + student["english"] + student["social_studies"] + student["science"]) / 4, reverse=True) 
-        #key tells sorted how to sort the students, in this case using a lambda function that calculates the average of each student's grades.
-        #reverse=True tells sorted to sort from highest to lowest, meaning that students with the highest averages will appear first in the sorted list.
-        #sorted_students is the list of students sorted from highest to lowest according to their grade point average.
-
-        top_3_students = sorted_students[:3]
-        #[:3] takes the first 3 students from the sorted list, which are those with the highest averages since it was sorted from highest to lowest using reverse=True. Without considering the element at index 3, that is, the fourth element in the list.
-        print("Top 3 Students:")
-        #that start=1 makes the index start at 1 instead of 0, which is useful for displaying students as “1. Student name” instead of “0. Student name”.
-        for index, student in enumerate(top_3_students, start=1):
-            average = (
-                student["spanish"]
-                + student["english"]
-                + student["social_studies"]
-                + student["science"]
-            ) / 4
-
-            print(f"{index}. {student['name']} - {average:.2f}")
 
 
 def show_average_grade_of_all_students(student_list):
     if student_list == []:
         print("No students to calculate average.")
     else:
-        average_list = average_grade_of_each_student(student_list)
+        average_list = [calculate_average(student) for student in student_list]
         all_average = sum(average_list) / len(average_list) #floats cannot be iterated
         print(f"The average grade of all students is: {all_average:.2f}")
+
+
 
 def delete_student(student_list):
     if student_list == []:
@@ -111,6 +125,7 @@ def delete_student(student_list):
                     break
         else:
             print(f"No student found with the name '{name_to_delete}' and class number '{class_number_to_delete}'.")
+
 
 
 def failed_students(student_list):

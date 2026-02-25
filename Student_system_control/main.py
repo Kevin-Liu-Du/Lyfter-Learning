@@ -2,6 +2,8 @@ import data
 import actions
 import menu
 
+CSV_PATH = "students.csv" #create a constant to avoid hardcoding the file path in multiple places, making it easier to manage and update if needed.
+
 def main():
     student_list = []
     while True:
@@ -12,11 +14,11 @@ def main():
         elif option == 2:
             actions.show_all_students(student_list)
         elif option == 3:
-            actions.show_top_3_students(student_list)
+            actions.print_top_3_students(student_list)
         elif option == 4:
             actions.show_average_grade_of_all_students(student_list)
         elif option == 5:
-            data.export_CSV_file("students.csv", student_list, data.student_headers)
+            data.export_CSV_file(CSV_PATH, student_list, data.student_headers)
         elif option == 6:
             data.import_csv(student_list)
         elif option == 7:
@@ -25,7 +27,7 @@ def main():
             actions.failed_students(student_list)
         elif option == 9:
             print("Exiting the program. Goodbye!")
-            exit()
+            return
 
 if __name__ == "__main__":
     main()

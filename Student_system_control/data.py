@@ -1,5 +1,4 @@
 import csv
-import main
 
 student_headers = (
     "name",
